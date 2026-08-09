@@ -35,6 +35,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+    lint {
+        abortOnError = true
+        warningsAsErrors = false
+        checkReleaseBuilds = true
+        // Keep CI signal high without drowning in dependency-nudge noise.
+        disable += setOf("ObsoleteLintCustomCheck", "GradleDependency")
+    }
 }
 
 dependencies {
