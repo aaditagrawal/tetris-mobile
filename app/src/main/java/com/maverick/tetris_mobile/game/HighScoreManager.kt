@@ -71,12 +71,6 @@ class HighScoreManager(context: Context) {
         return rank + 1
     }
 
-    fun isHighScore(score: Int): Boolean {
-        if (score <= 0) return false
-        val entries = getHighScores()
-        return entries.size < MAX_ENTRIES || score > (entries.lastOrNull()?.score ?: 0)
-    }
-
     private fun appendScoreHistory(score: Int, level: Int, lines: Int) {
         val timestamp = System.currentTimeMillis()
         val existing = getScoreHistory().toMutableList()
