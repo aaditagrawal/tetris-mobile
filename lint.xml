@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <issue id="AndroidGradlePluginVersion">
+        <!-- Gradle 9.7 is deliberately pinned to avoid AGP 9.4.1's Gradle 9.8 deprecation. -->
+        <ignore regexp="A newer version of Gradle than 9\.7\.0 is available: 9\.8\.0" />
+    </issue>
+</lint>

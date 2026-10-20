@@ -19,14 +19,14 @@ val GeistMono = FontFamily(
     Font(R.font.geist_mono_medium, FontWeight.Medium)
 )
 
-val Typography = Typography(
+fun gameTypography(palette: GamePalette): Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = InstrumentSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 48.sp,
         lineHeight = 52.sp,
         letterSpacing = (-1).sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     displayMedium = TextStyle(
         fontFamily = InstrumentSerif,
@@ -34,7 +34,7 @@ val Typography = Typography(
         fontSize = 36.sp,
         lineHeight = 40.sp,
         letterSpacing = (-0.5).sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     headlineLarge = TextStyle(
         fontFamily = InstrumentSerif,
@@ -42,7 +42,7 @@ val Typography = Typography(
         fontSize = 28.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     headlineMedium = TextStyle(
         fontFamily = InstrumentSerif,
@@ -51,7 +51,7 @@ val Typography = Typography(
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
-        color = TextSecondary
+        color = palette.textSecondary
     ),
     titleLarge = TextStyle(
         fontFamily = GeistMono,
@@ -59,7 +59,7 @@ val Typography = Typography(
         fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     titleMedium = TextStyle(
         fontFamily = GeistMono,
@@ -67,7 +67,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     bodyLarge = TextStyle(
         fontFamily = GeistMono,
@@ -75,7 +75,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = palette.textPrimary
     ),
     bodyMedium = TextStyle(
         fontFamily = GeistMono,
@@ -83,7 +83,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.3.sp,
-        color = TextSecondary
+        color = palette.textSecondary
     ),
     labelLarge = TextStyle(
         fontFamily = GeistMono,
@@ -91,7 +91,7 @@ val Typography = Typography(
         fontSize = 13.sp,
         lineHeight = 16.sp,
         letterSpacing = 1.sp,
-        color = TextSecondary
+        color = palette.textSecondary
     ),
     labelMedium = TextStyle(
         fontFamily = GeistMono,
@@ -99,6 +99,6 @@ val Typography = Typography(
         fontSize = 11.sp,
         lineHeight = 14.sp,
         letterSpacing = 1.5.sp,
-        color = TextTertiary
+        color = palette.textTertiary
     )
 )

@@ -3,6 +3,7 @@ package com.maverick.tetris_mobile.game
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -71,6 +72,20 @@ class GameEngineTest {
         assertTrue(board.all { row -> row.all { it == null } })
     }
 
+    @Test
+    fun `placePiece only copies rows touched by the piece`() {
+        val board = emptyBoard()
+        val piece = TetrisPiece(PieceType.O, Position(4, 0))
+        val placed = GameEngine.placePiece(board, piece)
+        for (y in board.indices) {
+            if (y in 0..1) {
+                assertTrue("row $y should be a new list", board[y] !== placed[y])
+            } else {
+                assertTrue("row $y should be shared", board[y] === placed[y])
+            }
+        }
+    }
+
     // ---------- clearLines ----------
 
     @Test
@@ -78,6 +93,12 @@ class GameEngineTest {
         val (board, cleared) = GameEngine.clearLines(emptyBoard())
         assertEquals(0, cleared)
         assertEquals(emptyBoard(), board)
+    }
+
+    @Test
+    fun `clearLines preserves board identity when no rows clear`() {
+        val board = boardWithRow(GameState.BOARD_HEIGHT - 1, null)
+        assertSame(board, GameEngine.clearLines(board).first)
     }
 
     @Test
@@ -217,5 +238,27 @@ class GameEngineTest {
         val dropped = GameEngine.getDropPosition(emptyBoard(), piece)
         assertEquals(2, dropped.position.x)
         assertNotEquals(0, dropped.position.y)
+    }
+
+    @Test
+    fun `landing is unchanged by valid downward moves across pieces and rotations`() {
+        val boards = listOf(emptyBoard(), List(GameState.BOARD_HEIGHT) { y ->
+            List(GameState.BOARD_WIDTH) { x ->
+                if (y >= GameState.BOARD_HEIGHT - 1 - x % 4) PieceType.J else null
+            }
+        })
+        for (board in boards) {
+            for (type in PieceType.entries) {
+                for (rotation in 0..3) {
+                    var piece = GameEngine.spawnPiece(type).copy(rotation = rotation)
+                    val landing = GameEngine.getDropPosition(board, piece)
+                    while (GameEngine.isValidPosition(board, piece.moved(0, 1))) {
+                        piece = piece.moved(0, 1)
+                        assertEquals("$type rotation $rotation at ${piece.position}",
+                            landing, GameEngine.getDropPosition(board, piece))
+                    }
+                }
+            }
+        }
     }
 }

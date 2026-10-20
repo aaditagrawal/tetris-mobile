@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,32 +20,38 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.maverick.tetris_mobile.game.TetrisPiece
+import com.maverick.tetris_mobile.ui.theme.LocalGamePalette
 import com.maverick.tetris_mobile.ui.theme.InstrumentSerif
 import com.maverick.tetris_mobile.ui.theme.Surface
 import com.maverick.tetris_mobile.ui.theme.SurfaceBorder
 import com.maverick.tetris_mobile.ui.theme.TextTertiary
 
 @Composable
-fun NextPiecePreview(
+fun PiecePreview(
+    label: String,
     piece: TetrisPiece?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dimmed: Boolean = false,
+    compact: Boolean = false
 ) {
+    val palette = LocalGamePalette.current
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "NEXT",
+            text = label,
             fontFamily = InstrumentSerif,
             fontStyle = FontStyle.Italic,
             fontSize = 12.sp,
+            lineHeight = 16.sp,
             letterSpacing = 2.sp,
-            color = TextTertiary
+            color = if (dimmed) TextTertiary.copy(alpha = 0.5f) else TextTertiary
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(if (compact) 6.dp else 8.dp))
 
-        val previewSize = 72.dp
+        val previewSize = if (compact) 56.dp else 72.dp
 
         Canvas(
             modifier = Modifier
@@ -57,14 +62,22 @@ fun NextPiecePreview(
         ) {
             piece ?: return@Canvas
 
-            val cells = piece.cells()
-            val pieceColor = piece.type.toColor()
+            val pieceColor = palette.colorFor(piece.type).let { color ->
+                if (dimmed) color.copy(alpha = 0.4f) else color
+            }
 
-            // Find bounding box of piece cells relative to piece position
-            val minX = cells.minOf { it.x }
-            val maxX = cells.maxOf { it.x }
-            val minY = cells.minOf { it.y }
-            val maxY = cells.maxOf { it.y }
+            var minX = Int.MAX_VALUE
+            var maxX = Int.MIN_VALUE
+            var minY = Int.MAX_VALUE
+            var maxY = Int.MIN_VALUE
+
+            piece.forEachCell { x, y ->
+                minX = minOf(minX, x)
+                maxX = maxOf(maxX, x)
+                minY = minOf(minY, y)
+                maxY = maxOf(maxY, y)
+            }
+
             val pieceWidth = maxX - minX + 1
             val pieceHeight = maxY - minY + 1
 
@@ -72,22 +85,22 @@ fun NextPiecePreview(
                 size.width / 4f,
                 size.height / 4f
             )
-            val cornerRadius = 3.dp.toPx()
+            val cornerRadius = CornerRadius(3.dp.toPx())
+            val gap = 1.dp.toPx()
+            val cellDrawSize = Size(cellSize - gap * 2, cellSize - gap * 2)
 
-            // Center the piece in the canvas
             val offsetX = (size.width - pieceWidth * cellSize) / 2f
             val offsetY = (size.height - pieceHeight * cellSize) / 2f
 
-            for (cell in cells) {
-                val x = offsetX + (cell.x - minX) * cellSize
-                val y = offsetY + (cell.y - minY) * cellSize
-                val gap = 1.dp.toPx()
+            piece.forEachCell { cellX, cellY ->
+                val x = offsetX + (cellX - minX) * cellSize
+                val y = offsetY + (cellY - minY) * cellSize
 
                 drawRoundRect(
                     color = pieceColor,
                     topLeft = Offset(x + gap, y + gap),
-                    size = Size(cellSize - gap * 2, cellSize - gap * 2),
-                    cornerRadius = CornerRadius(cornerRadius, cornerRadius)
+                    size = cellDrawSize,
+                    cornerRadius = cornerRadius
                 )
             }
         }

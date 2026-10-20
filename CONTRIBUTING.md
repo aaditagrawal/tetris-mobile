@@ -10,10 +10,10 @@ Thank you for your interest in contributing! This guide will help you set up you
 
 | Requirement | Version | Notes |
 |-------------|---------|-------|
-| Android Studio | Koala (2024.1.1+) | Latest stable recommended |
-| JDK | 17+ | Bundled with Android Studio |
-| Android SDK | API 35/36 | Target API 36, Min API 35 |
-| Gradle | 8.13+ | Wrapper included in repo |
+| Android Studio | AGP 9.4-compatible release | Latest stable recommended |
+| JDK | 21 | Gradle daemon; app bytecode targets Java 17 |
+| Android SDK | API 37 | Compile/target 37, minimum 33; Build Tools 37.0.0 |
+| Gradle | 9.7.0 | Use the included wrapper |
 
 ### Getting Started
 
@@ -23,7 +23,7 @@ git clone https://github.com/your-username/tetris-mobile.git
 cd tetris-mobile
 
 # Build the debug APK
-./gradlew assembleDebug
+./gradlew assembleDebug assembleRelease testDebugUnitTest lintDebug
 ```
 
 Open the project in Android Studio and let Gradle sync complete before making changes.
@@ -123,7 +123,7 @@ test: add unit tests for TetrisPiece rotations
 1. **Create a feature branch** from `main`
 2. **Make your changes** following the code standards
 3. **Add tests** for new features or bug fixes
-4. **Verify the build** passes: `./gradlew assembleDebug`
+4. **Verify the build** passes: `./gradlew assembleDebug assembleRelease testDebugUnitTest lintDebug`
 5. **Submit a PR** with a clear description of changes
 
 For UI changes, include screenshots in your PR description.
@@ -154,11 +154,12 @@ Run on a connected device or emulator. Located in `app/src/androidTest/`.
 
 Looking for something to work on? Here are some ideas from our roadmap:
 
-- [ ] **Ghost Piece** — Visual indicator showing where the piece will land
-- [ ] **Hold Piece** — Swap and hold tetrominos for later use
-- [ ] **Haptic Feedback** — Tactile response for rotations and line clears
+- [x] **Ghost Piece** — Visual indicator showing where the piece will land
+- [x] **Hold Piece** — Swap and hold tetrominos for later use
+- [x] **Haptic Feedback** — Tactile response for rotations and line clears
 - [ ] **Theme Support** — Dark/Light mode and custom color palettes
 - [ ] **Line Clear Animations** — Smoother transitions when clearing lines
+- [ ] **SRS kick tables** — Full guideline wall-kick data beyond basic offsets
 
 ---
 

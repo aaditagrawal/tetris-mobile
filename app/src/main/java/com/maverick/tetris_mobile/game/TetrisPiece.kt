@@ -14,6 +14,13 @@ data class TetrisPiece(
         return shape.map { Position(position.x + it.x, position.y + it.y) }
     }
 
+    inline fun forEachCell(block: (x: Int, y: Int) -> Unit) {
+        val shape = SHAPES[type]!![rotation % SHAPES[type]!!.size]
+        for (cell in shape) {
+            block(position.x + cell.x, position.y + cell.y)
+        }
+    }
+
     fun rotated(): TetrisPiece {
         val rotationCount = SHAPES[type]!!.size
         return copy(rotation = (rotation + 1) % rotationCount)
