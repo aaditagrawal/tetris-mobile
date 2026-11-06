@@ -1,0 +1,14 @@
+// Benchmark-only sources and the baseline adapter never enter the app's runtime graph.
+gradle.beforeProject { project ->
+    project.pluginManager.withPlugin('com.android.application') {
+        def fixture = new File(gradle.startParameter.projectProperties['viewModelBenchmarkDir'])
+        project.android.sourceSets.test.kotlin.srcDir(fixture)
+        project.android.sourceSets.test.java.srcDir(fixture)
+        project.dependencies.add('testImplementation', 'androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0')
+        project.tasks.withType(Test).configureEach {
+            maxParallelForks = 1
+            testLogging.showStandardStreams = true
+            outputs.upToDateWhen { false }
+        }
+    }
+}

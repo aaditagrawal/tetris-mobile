@@ -14,7 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import com.maverick.tetris_mobile.ui.refresh.RefreshRateViewModel
 import com.maverick.tetris_mobile.ui.refresh.rememberRefreshRateCapabilities
 import com.maverick.tetris_mobile.ui.refresh.resolveRefreshRate
@@ -43,20 +43,24 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
         )
 
+        // Share the Activity's default factory, creation extras and retained ViewModelStore.
+        // Remember each lookup at its original call site so initialization stays lazy.
+        val models = ViewModelProvider(this)
+
         setContent {
-            val refreshRateViewModel: RefreshRateViewModel = viewModel()
+            val refreshRateViewModel = remember { models[RefreshRateViewModel::class.java] }
             val selectedRefreshRate by refreshRateViewModel.selectedRateHz.collectAsStateWithLifecycle()
             val refreshCapabilities = rememberRefreshRateCapabilities(this@MainActivity)
             val refreshRate = resolveRefreshRate(selectedRefreshRate, refreshCapabilities.ratesHz)
             var refreshActive by remember { mutableStateOf(false) }
             GameRefreshRateRequest(window, refreshRate, refreshActive)
-            val paletteViewModel: PaletteViewModel = viewModel()
+            val paletteViewModel = remember { models[PaletteViewModel::class.java] }
             val palette by paletteViewModel.palette.collectAsStateWithLifecycle()
             TetrismobileTheme(palette = palette) {
                 val highScoreManager = remember { HighScoreManager(applicationContext) }
-                val gameViewModel: GameViewModel = viewModel()
-                val scoreSaveViewModel: ScoreSaveViewModel = viewModel()
-                val sessionViewModel: GameSessionViewModel = viewModel()
+                val gameViewModel = remember { models[GameViewModel::class.java] }
+                val scoreSaveViewModel = remember { models[ScoreSaveViewModel::class.java] }
+                val sessionViewModel = remember { models[GameSessionViewModel::class.java] }
                 val sessionReady by sessionViewModel.ready.collectAsStateWithLifecycle()
                 val saveError by sessionViewModel.saveError.collectAsStateWithLifecycle()
                 val resumable = remember(gameViewModel) {
